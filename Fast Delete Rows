@@ -1,0 +1,33 @@
+Sub FastDeleteRows()
+'Activate the workbook you are currently working in
+ Workbooks("TestBook.txt").Activate
+    
+    Dim oldWs As Worksheet, newWs As Worksheet, rowHeights() As Long
+    Dim wsName As String, t As Double, oldUsedRng As Range
+
+
+    
+'Name of sheet that you want to manipulate
+    Set oldWs = Worksheets("ChangeThisToYourSheet")
+    wsName = oldWs.Name
+'Select all of your data (I usually select much more data than necessary just incase
+'the length of the data changes from day to day).
+    Set oldUsedRng = oldWs.Range("A1:Z800000")
+
+    If oldUsedRng.Rows.Count > 1 Then                           'If sheet is not empty
+        Set newWs = Sheets.Add(After:=oldWs)                    'Add new sheet
+        newWs.Name = "Paste1"                                   'New sheet is added
+        With oldUsedRng
+            .AutoFilter Field:=2, Criteria1:="~*"               'Field is the column you want to delete by, Criteria is identifier that tells the macro what should be chosen
+            .Copy                                               'Copy visible data
+        End With
+        With newWs.Cells
+            .PasteSpecial xlPasteColumnWidths
+            .PasteSpecial xlPasteAll                            'Paste data on new sheet
+            .Cells(1, 1).Select                                 'Deselect paste area
+            .Cells(1, 1).Copy                                   'Clear Clipboard
+        End With
+       
+    End If
+    
+End Sub
