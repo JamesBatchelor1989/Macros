@@ -1,0 +1,17 @@
+Sub FillFormulaDownDynamic()
+
+'select the sheet you want to use.
+
+With Sheets("PutYourSheetNameHere")
+
+'Below, U2 is the first cell in which your formula appears in Column U. 
+'Range U2:U just says to fill all the way down starting at cell U2 down column U
+'.Rows.Count, "A" is the row you want to count down dynamically. 
+'For Example, Row A in this example never has missing data and is always the exact end
+'of this dataset. This means that the formula in row U2 will fill down until it sees
+'the end of data in row A and the will stop filling down. 
+
+  .Range("U2").AutoFill .Range("U2:U" & .Cells(.Rows.Count, "A").End(xlUp).Row + 0)
+End With
+
+End Sub
