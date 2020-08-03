@@ -1,0 +1,86 @@
+Sub OpenWorkbook()
+
+'    the purpose of this macro is to allow the opening of a workbook when you do not know the
+'    username of the person who will be opening it.
+
+'    first, lets activate the book we are using.
+Workbooks("PutYourWorkbookNameHere.xlsm").Activate
+'    then activate a sheet (it doesn't matter which sheet we activate) just make sure that
+'    whatever sheet you use does not have values in the ranges listed below (for this example we are using X1 and X2 on
+'    the "Test" sheet.
+Sheets("Test").Activate
+'    Make sure these ranges ("X1") are not filled with data.
+Range("X1").Value = Environ("Username")
+'    Make sure these ranges ("X2") are not filled with data. The purpose of this X2 data is to specify more infomation that might
+'    be attached to a username. For Example some organization have usernames as ("\Users\Billy\SAP\SAP GUI..."). While other users
+'    might have their username say something like ("\Users\Billy.TestOrg\SAP\SAP GUI..."). We want the macro to open on either instance.
+'    Your org might have only one username type, and if so, then this section won't matter.
+
+Range("X2").Select
+    ActiveCell.FormulaR1C1 = "=R[-1]C & "".TestOrg"""
+
+On Error Resume Next
+Dim wkb As Workbook, wkbFrom As Workbook
+Dim fromPath As String
+
+'   Get path from cell X1 on Test tab
+fromPath = Sheets("Test").Range("X1")
+
+'   Make sure there is a backslash at the end of the from path
+If Right(fromPath, 1) <> "\" Then fromPath = fromPath & ""
+'   This will open the file you are trying to open. You'll need to modify the path.
+Set wkb = ThisWorkbook
+Set wkbFrom = Workbooks.Open("C:\Users\" & fromPath & "\Documents\SAP\SAP GUI\PutTheFileYouWantToOpenHere.txt")
+
+'''Error check will see if the file was opened correctly. If not, it will run OpenWorkbook_Check2
+Set wb = Workbooks("PutTheFileYouWantToOpenHere.txt")
+If Err <> 0 Then 'workbook isn't open
+   'open it
+   Call OpenWorkbook_Check2
+On Error GoTo 0
+
+
+End If
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+' This clears the contents of X1 and X2 on the Test Page if the file was opened correctly.
+Workbooks("PutYourWorkbookNameHere.xlsm").Activate
+Sheets("Test").Activate
+
+    Range("X2").Select
+    Selection.ClearContents
+    Range("X1").Select
+    Selection.ClearContents
+
+End Sub
+
+Sub OpenWorkbook_Check2()
+' Basically, everything on this works the exact same as above, except for this time, it will add the username.testorg and try to open the file again
+Workbooks("PutYourWorkbookNameHere.xlsm").Activate
+
+Sheets("Test").Activate
+
+Range("X1").Value = Environ("Username")
+
+Range("X2").Select
+    ActiveCell.FormulaR1C1 = "=R[-1]C & "".TestOrg"""
+Dim wkb2 As Workbook, wkbFrom2 As Workbook
+Dim fromPath2 As String
+
+'   Get path from cell X2 on Test tab
+fromPath2 = Sheets("Test").Range("X2")
+
+'   Make sure there is a backslash at the end of the from path
+If Right(fromPath2, 1) <> "\" Then fromPath2 = fromPath2 & ""
+
+Set wkb2 = ThisWorkbook
+Set wkbFrom2 = Workbooks.Open("C:\Users\" & fromPath2 & "\Documents\SAP\SAP GUI\PutTheFileYouWantToOpenHere.txt")
+
+Workbooks("PutYourWorkbookNameHere.xlsm").Activate
+Sheets("Test").Activate
+
+    Range("X2").Select
+    Selection.ClearContents
+    Range("X1").Select
+    Selection.ClearContents
+    
+End Sub
