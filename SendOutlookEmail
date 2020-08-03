@@ -1,0 +1,44 @@
+Public Sub SaveSend_Embedded_Chart()
+'Select current wookbook
+Workbooks("TestBook.xlsm").Activate
+'Select sheet that you want to copy information from and send
+Sheets("TestBookEmailSheet").Activate
+
+    Dim Sht As Excel.Worksheet
+    Set Sht = ThisWorkbook.ActiveSheet
+    'Select the range of information that you want to copy and send
+ActiveSheet.Range("G1:W48").Copy
+
+
+    Dim OutApp As Object
+    Set OutApp = CreateObject("Outlook.Application")
+
+    Dim OutMail As Object
+    Set OutMail = OutApp.CreateItem(0)
+
+    Dim vInspector As Object
+    Set vInspector = OutMail.GetInspector
+
+    Dim wEditor As Object
+    Set wEditor = vInspector.WordEditor
+
+'Here I created a new sheet called "Email" that has the subject, CC, and TO fields predefined.
+'Basically this means that whatever text is in cells E2, E3, and A3 on the "Email" sheet are put in the TO, CC, and Subject lines. 
+'However you can manually fill this information in below just remove the Range.
+    With OutMail
+        .TO = Range("Email!E2")
+        .CC = Range("Email!E3")
+        .Subject = Range("Email!A3")
+        .display
+
+         wEditor.Paragraphs(1).Range.Paste
+
+
+    End With
+
+    Set OutMail = Nothing
+    Set OutApp = Nothing
+
+End Sub
+
+
